@@ -10,52 +10,52 @@ app.use(bodyParser.json());
 //database related information
 //const dbUser=dbUser;
 //const pass = password6356;
-const uri = "mongodb+srv://dbUser:password6356@cluster0-gsq7r.mongodb.net/test?retryWrites=true&w=majority";
+//const uri = "mongodb+srv://dbUser:password6356@cluster0-gsq7r.mongodb.net/test?retryWrites=true&w=majority";
+const uri = "mongodb://dbWebUser:krYFPv37jD1emDoD@cluster0-shard-00-00-gsq7r.mongodb.net:27017,cluster0-shard-00-01-gsq7r.mongodb.net:27017,cluster0-shard-00-02-gsq7r.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
 let client = new MongoClient(uri, { useNewUrlParser: true });
 
 // //get request
  app.get('/products',(req, res)=>{
-client = new MongoClient(uri, { useNewUrlParser: true });
+ client = new MongoClient(uri, { useNewUrlParser: true });
 
     client.connect(err => {
         const collection = client.db("onlineStore").collection("products");
-        collection.find.toArray((err,documents)=>{
-            console.log("database");
-            
+        collection.find().toArray((err,documents)=>{
             if (err) {
                 console.log(err);
                 res.status(500).send({message:err});
-                
             }
            else{
-          
             res.send(documents); 
+            
            }  
         });
-        client.close();
+        //client.close();
       });
 })
 // //post request
 app.post('/addProduct',(req,res)=>{
     //save to database
     const product = req.body;
-    client = new MongoClient(uri, { useNewUrlParser: true });
-    console.log(product);
+    console.log("Product",product);
+    client = new MongoClient(uri, { useNewUrlParser: true});
     
-    client.connect(err => {
+    
+    client.connect(error => {
         const collection = client.db("onlineStore").collection("products");
         collection.insertOne(product ,(err,result)=>{
             if (err) {
                 console.log(err);
                 res.status(500).send({message:err});
-                
             }
            else{
+          console.log("Database Connected");
           
             res.send(result.ops[0]); 
            }  
         });
-        client.close();
+        //client.close();
       });
 });
-app.listen(3000, ()=>console.log("Listening at Port 3000"));
+const port=process.env.PORT ||3000
+app.listen(port, ()=>console.log("Listening at Port 3000"));
